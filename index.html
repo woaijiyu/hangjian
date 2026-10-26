@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>行间</title>
+  <link rel="stylesheet" href="dist/bundle.css" />
+  <link rel="stylesheet" href="styles/themes.css" />
+  <link rel="stylesheet" href="styles/app.css" />
+</head>
+<body data-theme="mariana">
+  <div id="app">
+    <header id="titlebar">
+      <button id="brand" class="brand" title="关于行间" data-i18n-title="About Interline">
+        <span class="logo" data-icon="logo"></span>
+        <span class="brand-name" data-i18n="Interline">行间</span>
+      </button>
+      <nav id="menubar" aria-label="应用菜单" data-i18n-aria-label="Application menu"></nav>
+      <div class="titlebar-drag" id="titlebar-drag"></div>
+      <div id="window-title" class="window-title"><span id="window-title-text">行间</span></div>
+      <div class="titlebar-drag"></div>
+      <div class="window-controls">
+        <button class="win-btn" id="win-min" title="最小化" aria-label="最小化" data-i18n-title="Minimize" data-i18n-aria-label="Minimize"><svg viewBox="0 0 16 16"><path d="M4 8h8" /></svg></button>
+        <button class="win-btn" id="win-max" title="最大化" aria-label="最大化" data-i18n-title="Maximize" data-i18n-aria-label="Maximize"><span data-icon="maximize"></span></button>
+        <button class="win-btn close" id="win-close" title="关闭" aria-label="关闭" data-i18n-title="Close" data-i18n-aria-label="Close"><svg viewBox="0 0 16 16"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" /></svg></button>
+      </div>
+    </header>
+
+    <div id="tabsbar">
+      <button id="sidebar-toggle" class="tabbar-btn" title="切换侧栏 (Ctrl+B)" aria-label="切换侧栏" data-i18n-title="Toggle Sidebar (Ctrl+B)" data-i18n-aria-label="Toggle sidebar">
+        <svg viewBox="0 0 16 16"><rect x="2" y="2.7" width="12" height="10.6" rx="1.6"/><path d="M6.4 2.7v10.6"/></svg>
+      </button>
+      <div id="tabs" role="tablist"></div>
+      <div class="tabsbar-fill" id="tabsbar-fill"></div>
+    </div>
+
+    <main id="workspace">
+      <aside id="sidebar">
+        <div id="sidebar-header">
+          <button id="sidebar-folder-name" class="sidebar-folder" title="打开文件夹">未打开文件夹</button>
+          <div class="sidebar-actions" id="sidebar-actions">
+            <button data-action="new-file" title="新建文件" data-i18n-title="New File"><svg viewBox="0 0 16 16"><path d="M8 3.2v9.6M3.2 8h9.6"/></svg></button>
+            <button data-action="new-folder" title="新建文件夹" data-i18n-title="New Folder"><svg viewBox="0 0 16 16"><path d="M1.9 4.4c0-.5.4-.9.9-.9h3l1.2 1.3h5.9c.5 0 .9.4.9.9v6c0 .5-.4.9-.9.9h-10c-.5 0-.9-.4-.9-.9z"/><path d="M8 7.2v3.4M6.3 8.9h3.4"/></svg></button>
+            <button data-action="refresh" title="刷新" data-i18n-title="Refresh"><svg viewBox="0 0 16 16"><path d="M12.6 6.2a4.9 4.9 0 1 0 .3 3.3"/><path d="M12.9 2.9v3.5H9.4"/></svg></button>
+            <button data-action="collapse" title="折叠文件夹" data-i18n-title="Collapse Folders"><svg viewBox="0 0 16 16"><path d="M4.2 6.2L8 10l3.8-3.8"/><path d="M4.2 2.9L8 6.7l3.8-3.8"/></svg></button>
+          </div>
+        </div>
+        <div class="sidebar-scroll">
+          <section class="sb-section">
+            <div class="sb-section-head"><span data-i18n="Open Files">已打开文件</span><span class="sb-count" id="open-file-count"></span></div>
+            <div id="open-files-list" class="open-file-list"></div>
+          </section>
+          <section class="sb-section tree-section">
+            <div class="sb-section-head"><span data-i18n="Folders">文件夹</span></div>
+            <div id="file-tree" class="file-tree"></div>
+            <div id="tree-empty" class="sidebar-empty">
+              <span class="sidebar-empty-icon"><svg viewBox="0 0 16 16"><path d="M1.9 5.3c0-.5.4-.9.9-.9h3l1.2 1.3h5.9c.5 0 .9.4.9.9v.5H1.9z"/><path d="M1.9 6.5h12.2l-1.2 5c-.1.4-.4.6-.8.6H2.8c-.5 0-.9-.4-.9-.9z"/></svg></span>
+              <p class="sidebar-empty-title" data-i18n="Browse project files">浏览项目文件</p>
+              <p class="sidebar-empty-hint" data-i18n="Open a folder to browse its files">打开文件夹以浏览其中的文件</p>
+              <button class="btn tiny" id="tree-open-folder" data-i18n="Open Folder…">打开文件夹…</button>
+            </div>
+          </section>
+        </div>
+      </aside>
+      <div id="sidebar-resizer" title="调整侧栏宽度" data-i18n-title="Resize sidebar"></div>
+
+      <section id="editor-area">
+        <div id="editor-host"></div>
+        <aside id="minimap-wrap" aria-hidden="true">
+          <canvas id="minimap"></canvas>
+          <div id="minimap-slider"></div>
+        </aside>
+
+        <div id="findbar" class="hidden" role="search">
+          <div class="find-row">
+            <span class="find-icon"><svg viewBox="0 0 16 16"><circle cx="7.1" cy="7.1" r="4.3"/><path d="M10.4 10.4l3 3"/></svg></span>
+            <div class="find-field">
+              <input id="find-input" class="find-input" placeholder="查找" spellcheck="false" autocomplete="off" aria-label="查找" data-i18n-placeholder="Find" data-i18n-aria-label="Find" />
+            </div>
+            <span id="find-count" class="find-count"></span>
+            <button id="find-case" class="find-btn toggle" title="匹配大小写" data-i18n-title="Match case">Aa</button>
+            <button id="find-word" class="find-btn toggle" title="全字匹配" data-i18n-title="Whole word">W</button>
+            <button id="find-regex" class="find-btn toggle" title="正则表达式" data-i18n-title="Regular expression">.*</button>
+            <button id="find-prev" class="find-btn icon" title="上一个匹配项 (Shift+Enter)" data-i18n-title="Previous match (Shift+Enter)"><svg viewBox="0 0 16 16"><path d="M4.2 9.3L8 5.5l3.8 3.8"/></svg></button>
+            <button id="find-next" class="find-btn icon" title="下一个匹配项 (Enter)" data-i18n-title="Next match (Enter)"><svg viewBox="0 0 16 16"><path d="M4.2 6.7L8 10.5l3.8-3.8"/></svg></button>
+            <button id="find-replace-toggle" class="find-btn icon" title="切换替换栏" data-i18n-title="Toggle Replace"><svg viewBox="0 0 16 16"><path d="M3.9 9.4L8 5.3l4.1 4.1"/></svg></button>
+            <button id="find-close" class="find-btn icon" title="关闭 (Esc)" data-i18n-title="Close (Esc)"><svg viewBox="0 0 16 16"><path d="M4.4 4.4l7.2 7.2M11.6 4.4l-7.2 7.2"/></svg></button>
+          </div>
+          <div class="find-row replace-row hidden" id="replace-row">
+            <span class="find-icon replace-icon"><svg viewBox="0 0 16 16"><path d="M3.2 5.4h7.6l-2.1-2.1M12.8 10.6H5.2l2.1 2.1"/></svg></span>
+            <div class="find-field">
+              <input id="replace-input" class="find-input" placeholder="替换" spellcheck="false" autocomplete="off" aria-label="替换" data-i18n-placeholder="Replace" data-i18n-aria-label="Replace" />
+            </div>
+            <button id="replace-one" class="find-btn text" data-i18n="Replace">替换</button>
+            <button id="replace-all" class="find-btn text primary" data-i18n="Replace All">全部替换</button>
+            <span class="find-count" id="replace-status"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="statusbar">
+      <div class="status-group">
+        <button class="status-item clickable" id="status-pos" title="行和列" data-i18n-title="Line and column" data-i18n="Ln 1, Col 1">行 1，列 1</button>
+        <div class="status-item" id="status-sel" hidden></div>
+        <div class="status-item" id="status-cursors" hidden></div>
+      </div>
+      <div class="status-spacer"></div>
+      <div class="status-group">
+        <button class="status-item clickable hidden" id="status-wrap" title="切换自动换行" data-i18n-title="Toggle word wrap" data-i18n="Wrap">换行</button>
+        <button class="status-item clickable" id="status-indent" title="缩进" data-i18n-title="Indentation" data-i18n="Spaces: 4">空格：4</button>
+        <button class="status-item clickable" id="status-encoding" title="文件编码" data-i18n-title="File encoding">UTF-8</button>
+        <button class="status-item clickable" id="status-eol" title="换行符" data-i18n-title="Line endings">LF</button>
+        <button class="status-item clickable" id="status-lang" title="语法语言" data-i18n-title="Syntax language" data-i18n="Plain Text">纯文本</button>
+      </div>
+    </footer>
+  </div>
+
+  <div id="palette-overlay" class="overlay hidden">
+    <div class="palette" role="dialog" aria-label="命令面板" data-i18n-aria-label="Command palette">
+      <div class="palette-input-row">
+        <span class="palette-search-icon"><svg viewBox="0 0 16 16"><circle cx="7.1" cy="7.1" r="4.3"/><path d="M10.4 10.4l3 3"/></svg></span>
+        <input id="palette-input" class="palette-input" placeholder="转到文件…" spellcheck="false" autocomplete="off" data-i18n-placeholder="Go to file…" />
+        <span class="palette-esc">esc</span>
+      </div>
+      <div id="palette-list" class="palette-list" role="listbox"></div>
+      <div class="palette-footer">
+        <span id="palette-mode" data-i18n="Files">文件</span>
+        <span class="palette-footer-hint" data-i18n="↑↓ navigate · ↵ open">↑↓ 导航 · ↵ 打开</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-layer" class="overlay modal-backdrop hidden" role="presentation">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button class="modal-close" id="modal-close" aria-label="关闭" data-i18n-aria-label="Close"><svg viewBox="0 0 16 16"><path d="M4.4 4.4l7.2 7.2M11.6 4.4l-7.2 7.2"/></svg></button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <div id="dropdown-layer"></div>
+  <div id="toasts"></div>
+
+  <script src="dist/bundle.js"></script>
+</body>
+</html>

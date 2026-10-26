@@ -1,0 +1,32 @@
+{
+  "theme": "mariana",
+  "fontSize": 13,
+  "wrap": false,
+  "minimap": true,
+  "sidebar": true,
+  "sidebarWidth": 252,
+  "editor": {
+    "tabSize": 2,
+    "indentWithTabs": false,
+    "rulers": [80, 120],
+    "highlightActiveLine": true,
+    "matchBrackets": true,
+    "trimTrailingWhitespaceOnSave": false
+  },
+  "files": {
+    "autoSave": "off",
+    "restoreSession": true,
+    "encoding": "utf8",
+    "lineEndings": "LF"
+  },
+  "palette": {
+    "filesLimit": 4000,
+    "commandsLimit": 120,
+    "fuzzyHighlight": true
+  },
+  "recent": [
+    "demo/app.js",
+    "demo/README.md",
+    "demo/theme.css"
+  ]
+}
